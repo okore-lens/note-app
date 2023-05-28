@@ -8,9 +8,9 @@ import {
 } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 
-import { GOOGLE_WEB_CLIENT_ID } from "../global-config";
+import { GOOGLE_WEB_CLIENT_ID } from "../../global-config";
 
-const GoogleTest = () => {
+const LoginScreen = () => {
 	const [initializing, setInitializing] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [user, setUser] = useState<any>();
@@ -25,11 +25,11 @@ const GoogleTest = () => {
 	};
 
 	const onGoogleButtonPress = async () => {
-		// const isSignedIn = await GoogleSignin.isSignedIn();
-		// if (isSignedIn) {
-		// 	await GoogleSignin.revokeAccess();
-		// 	await GoogleSignin.signOut();
-		// }
+		const isSignedIn = await GoogleSignin.isSignedIn();
+		if (isSignedIn) {
+			await GoogleSignin.revokeAccess();
+			await GoogleSignin.signOut();
+		}
 		// Check if your device supports Google Play
 		await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
@@ -59,10 +59,10 @@ const GoogleTest = () => {
 
 	return (
 		<View>
-			<Text>GoogleTest</Text>
+			<Text>LoginScreen</Text>
 			<GoogleSigninButton onPress={onGoogleButtonPress} />
 		</View>
 	);
 };
 
-export default GoogleTest;
+export default LoginScreen;
