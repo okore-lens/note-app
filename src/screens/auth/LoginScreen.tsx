@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
 	GoogleSignin,
@@ -8,16 +8,21 @@ import {
 } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 
-import { GOOGLE_WEB_CLIENT_ID } from "../../global-config";
-
+import { GOOGLE_WEB_CLIENT_ID } from "@env";
+import { AuthContext } from "../../services/auth/AuthContext";
 const LoginScreen = () => {
+	// hooks
 	const [initializing, setInitializing] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [user, setUser] = useState<any>();
 
-	GoogleSignin.configure({
-		webClientId: GOOGLE_WEB_CLIENT_ID,
-	});
+	const authenticateUser = useContext(AuthContext)!.register;
+
+	// GoogleSignin.configure({
+	// 	webClientId: GOOGLE_WEB_CLIENT_ID,
+	// });
+
+	console.log(GOOGLE_WEB_CLIENT_ID);
 
 	const onAuthStateChanged = (user: any) => {
 		setUser(user);
@@ -37,17 +42,22 @@ const LoginScreen = () => {
 
 		console.log(idToken);
 
-		const userDetails = await GoogleSignin.signIn();
-
-		console.log(userDetails);
+		// Create a Google credential with the token
+		const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
 		// Sign-in the user with the credential
-		// const user_sign_in = auth().signInWithCredential(googleCredential);
-		// user_sign_in
-		// 	.then((data) => {
-		// 		console.log(data)
-		// 	})
-		// 	.catch((err) => console.log(err));
+		const user_sign_in = auth().signInWithCredential(googleCredential);
+		user_sign_in
+			.then((data) => {
+				authenticateUser({
+					email: data.user.email,
+					id: data.user.uid,
+					names: data.user.displayName,
+					notes: [],
+					photoUrl: data.user.photoURL,
+				});
+			})
+			.catch((err) => console.log(err));
 	};
 
 	useEffect(() => {
@@ -58,8 +68,8 @@ const LoginScreen = () => {
 	if (initializing) return null;
 
 	return (
-		<View>
-			<Text>LoginScreen</Text>
+		<View className="flex-1 items-center justify-center bg-yellow-700">
+			<Text className="text-lg font-extrabold">Inotes </Text>
 			<GoogleSigninButton onPress={onGoogleButtonPress} />
 		</View>
 	);
