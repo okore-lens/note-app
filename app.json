@@ -21,7 +21,7 @@
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.okore.appnotes"
+			"package": "com.okore.enote"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"

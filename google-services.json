@@ -7,63 +7,26 @@
 	"client": [
 		{
 			"client_info": {
-				"mobilesdk_app_id": "1:195576272719:android:a240d69463d8e78a19573a",
+				"mobilesdk_app_id": "1:195576272719:android:5c6ea01545a3bc9f19573a",
 				"android_client_info": {
-					"package_name": "com.okore.appnotes"
+					"package_name": "com.okore.enote"
 				}
 			},
 			"oauth_client": [
 				{
-					"client_id": "195576272719-29h5dg90t14m53iajdvubgve93tmgr7p.apps.googleusercontent.com",
+					"client_id": "195576272719-j7858j8flboupjnj0ug0ijthb9m82d3m.apps.googleusercontent.com",
 					"client_type": 1,
 					"android_info": {
-						"package_name": "com.okore.appnotes",
-						"certificate_hash": "667163adfaf7e7d0e482c4e1ea3f06a81f1a9fe3"
+						"package_name": "com.okore.enote",
+						"certificate_hash": "04da6ded6455ceeab494a980add93bc7751bcc7c"
 					}
 				},
 				{
-					"client_id": "195576272719-2ta455lqfsk9qhboogdnnhjoeatk3l9a.apps.googleusercontent.com",
+					"client_id": "195576272719-pai6gm6vbff8de8fv8e4km1jr0p7nb47.apps.googleusercontent.com",
 					"client_type": 1,
 					"android_info": {
-						"package_name": "com.okore.appnotes",
-						"certificate_hash": "c9a6df7d21908ae9d1c5303b371c205735dd7b34"
-					}
-				},
-				{
-					"client_id": "195576272719-agij6hpo4bol676v3sh4ghcra2dmjj7f.apps.googleusercontent.com",
-					"client_type": 3
-				}
-			],
-			"api_key": [
-				{
-					"current_key": "AIzaSyBasXDxdyK1ia2kFEEdd9CHlEmexKE2xQg"
-				}
-			],
-			"services": {
-				"appinvite_service": {
-					"other_platform_oauth_client": [
-						{
-							"client_id": "195576272719-agij6hpo4bol676v3sh4ghcra2dmjj7f.apps.googleusercontent.com",
-							"client_type": 3
-						}
-					]
-				}
-			}
-		},
-		{
-			"client_info": {
-				"mobilesdk_app_id": "1:195576272719:android:c82d9112df90a84119573a",
-				"android_client_info": {
-					"package_name": "com.okore.notesapp"
-				}
-			},
-			"oauth_client": [
-				{
-					"client_id": "195576272719-1r9d0gm8033tfc141p06huu4jrcnhmed.apps.googleusercontent.com",
-					"client_type": 1,
-					"android_info": {
-						"package_name": "com.okore.notesapp",
-						"certificate_hash": "47d57fa397e762f339c95ed8f978fbea2e8ed6d3"
+						"package_name": "com.okore.enote",
+						"certificate_hash": "a056f15ebc7d1e35952b719c154173496c52c363"
 					}
 				},
 				{

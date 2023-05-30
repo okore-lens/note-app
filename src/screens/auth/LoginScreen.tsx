@@ -18,11 +18,9 @@ const LoginScreen = () => {
 
 	const authenticateUser = useContext(AuthContext)!.register;
 
-	// GoogleSignin.configure({
-	// 	webClientId: GOOGLE_WEB_CLIENT_ID,
-	// });
-
-	console.log(GOOGLE_WEB_CLIENT_ID);
+	GoogleSignin.configure({
+		webClientId: GOOGLE_WEB_CLIENT_ID,
+	});
 
 	const onAuthStateChanged = (user: any) => {
 		setUser(user);
@@ -39,8 +37,6 @@ const LoginScreen = () => {
 		await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
 		const { idToken } = await GoogleSignin.signIn();
-
-		console.log(idToken);
 
 		// Create a Google credential with the token
 		const googleCredential = auth.GoogleAuthProvider.credential(idToken);
