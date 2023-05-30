@@ -1,9 +1,10 @@
 export type userData = {
-	id: string | null;
+	id: string;
 	names: string | null;
 	photoUrl: string | null;
 	email: string | null;
 	notes: [];
+	createdAt: number;
 };
 
 export interface IAuth {
