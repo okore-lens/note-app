@@ -18,7 +18,7 @@ interface authContextProvider {
 }
 
 const AuthContextProvider = ({ children }: authContextProvider) => {
-	const [user, setUser] = useState<userData>({
+	const [user, setUser] = useState<userData | any>({
 		email: "",
 		id: "",
 		notes: [],
@@ -42,8 +42,10 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 		// conditional operations dependant on  user existance
 		if (userDocSnap.exists()) {
 			const userDoc = userDocSnap.data();
+			setUser(userDoc);
 		} else {
 			await setDoc(userRef, userData);
+			setUser(userData);
 		}
 		setIsAuthenticated(true);
 	}, []);

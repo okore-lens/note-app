@@ -9,7 +9,7 @@ export default function App() {
 	return (
 		<AuthContextProvider>
 			<SafeAreaView className="flex-1">
-				<StatusBar style="dark" />
+				<StatusBar style="light" backgroundColor="#000000" />
 				<Navigation />
 			</SafeAreaView>
 		</AuthContextProvider>

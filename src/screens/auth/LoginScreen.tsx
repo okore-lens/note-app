@@ -44,6 +44,7 @@ const LoginScreen = () => {
 		// Sign-in the user with the credential
 		const user_sign_in = auth().signInWithCredential(googleCredential);
 		const createdAt = Date.now();
+
 		user_sign_in
 			.then((data) => {
 				authenticateUser({
@@ -51,7 +52,7 @@ const LoginScreen = () => {
 					id: data.user.uid,
 					names: data.user.displayName,
 					notes: [],
-					photoUrl: data.user.photoURL,
+					photoUrl: data.user.photoURL || "",
 					createdAt,
 				});
 			})
