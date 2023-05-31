@@ -3,24 +3,28 @@ import React from "react";
 
 interface ButtonProps {
 	title: string;
-	bgColor: string;
-	color: string;
-	width: string;
+	color?: string;
+	additionalStyles?: string;
+	onPress: () => void;
+	disabled?: boolean;
 }
 
 const Button = ({
 	title = "Button",
-	bgColor,
+	additionalStyles,
 	color,
-	width = "w-5/12",
+	onPress,
+	disabled,
 }: ButtonProps) => {
 	return (
 		<Pressable
 			android_ripple={{ color: "#efe" }}
-			className={`bg-${bgColor} p-2 rounded-md ${width}
+			className={`${additionalStyles} p-2 rounded-md 
             `}
+			onPress={() => onPress()}
+			disabled={disabled}
 		>
-			<Text className={`text-${color} text-center`}>{title}</Text>
+			<Text className={`${color} text-center`}>{title}</Text>
 		</Pressable>
 	);
 };

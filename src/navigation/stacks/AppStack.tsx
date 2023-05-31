@@ -29,13 +29,13 @@ const BottomStack = () => {
 				tabBarShowLabel: false,
 				tabBarStyle: {
 					elevation: 0,
-					backgroundColor: "#252525",
+					backgroundColor: "#3B3B3B",
 					borderTopWidth: 0,
 					paddingBottom: 10,
 				},
 				headerShadowVisible: false,
 				headerStyle: {
-					backgroundColor: "#252525",
+					backgroundColor: "#3B3B3B",
 				},
 				headerTintColor: "#ffffff",
 			}}
@@ -89,7 +89,7 @@ const AppStack = () => {
 			screenOptions={{
 				headerTintColor: "#ffffff",
 				headerStyle: {
-					backgroundColor: "#252525",
+					backgroundColor: "#3B3B3B",
 				},
 				headerShadowVisible: false,
 				headerTitle: "",
@@ -100,34 +100,8 @@ const AppStack = () => {
 				component={BottomStack}
 				options={{ headerShown: false }}
 			/>
-			<Stack.Screen
-				name="PreviewNote"
-				component={PreviewNoteScreen}
-				options={{
-					headerRight: () => (
-						<Pressable
-							android_ripple={{ color: "#eee" }}
-							className="bg-[#3B3B3B]  mr-4 mt-4 p-2 rounded-md items-center justify-center"
-						>
-							<Ionicons name="save-outline" size={18} color="#ffffff" />
-						</Pressable>
-					),
-				}}
-			/>
-			<Stack.Screen
-				name="CreateNote"
-				component={CreateNoteScreen}
-				options={{
-					headerRight: () => (
-						<Pressable
-							android_ripple={{ color: "#eee" }}
-							className="bg-[#3B3B3B]  mr-4 mt-4 p-2 rounded-md items-center justify-center"
-						>
-							<Ionicons name="save-outline" size={18} color="#ffffff" />
-						</Pressable>
-					),
-				}}
-			/>
+			<Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
+			<Stack.Screen name="CreateNote" component={CreateNoteScreen} />
 		</Stack.Navigator>
 	);
 };

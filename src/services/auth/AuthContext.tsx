@@ -6,10 +6,20 @@ import {
 	useCallback,
 } from "react";
 
-import { setDoc, doc, getDoc, collection, getDocs } from "firebase/firestore";
+import {
+	setDoc,
+	doc,
+	getDoc,
+	collection,
+	getDocs,
+	addDoc,
+	updateDoc,
+	arrayUnion,
+} from "firebase/firestore";
 
 import { db } from "../../firebase";
 import { IAuth, userData } from "../../@types/authentication";
+import { Note } from "../../@types/note";
 
 export const AuthContext = createContext<IAuth | null>(null);
 
@@ -54,9 +64,31 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 		setUser(userData);
 	}, []);
 
+	const createNote = useCallback(async (note: Note, user: userData) => {
+		// db connection ref
+		const noteRef = await addDoc(collection(db, "notes"), note);
+
+		// created note Id
+		const noteId = noteRef.id;
+
+		// update Firebase User Doc
+		await updateDoc(doc(db, "users", user.id), {
+			notes: arrayUnion(noteId),
+		});
+
+		// update app User
+		const previousNotes = user.notes;
+		const updatedProfile = {
+			...user,
+			notes: previousNotes,
+		};
+
+		updateUser(updatedProfile);
+	}, []);
+
 	const value = useMemo(
-		() => ({ user, isAuthenticated, register, updateUser }),
-		[user, isAuthenticated, register, updateUser]
+		() => ({ user, isAuthenticated, register, createNote }),
+		[user, isAuthenticated, register, createNote]
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Navigation from "./src/navigation/Navigation";
+import Navigation from "./src/navigation/index";
 import AuthContextProvider from "./src/services/auth/AuthContext";
 
 export default function App() {
