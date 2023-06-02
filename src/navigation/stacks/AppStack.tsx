@@ -17,6 +17,7 @@ import HomeScreen from "../../screens/app/HomeScreen";
 import ProfileScreen from "../../screens/app/ProfileScreen";
 import PreviewTodoScreen from "../../screens/app/PreviewTodoScreen";
 import CreateTodoScreen from "../../screens/app/CreateTodoScreen";
+import EditTodoScreen from "../../screens/app/EditTodoScreen";
 
 const BottomTabStack = createBottomTabNavigator<BottomTabStackParamList>();
 
@@ -100,7 +101,9 @@ const AppStack = () => {
 				component={BottomStack}
 				options={{ headerShown: false }}
 			/>
+
 			<Stack.Screen name="PreviewTodo" component={PreviewTodoScreen} />
+			<Stack.Screen name="EditTodo" component={EditTodoScreen} />
 			<Stack.Screen name="CreateTodo" component={CreateTodoScreen} />
 		</Stack.Navigator>
 	);

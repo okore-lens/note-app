@@ -9,6 +9,6 @@ export interface Todo {
 	createdAt: number;
 	completedAt: number | null;
 	dueDate: number;
-	priorityLevel: number;
+	priorityLevel?: number;
 	id?: string;
 }

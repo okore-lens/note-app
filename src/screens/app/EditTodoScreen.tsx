@@ -12,7 +12,10 @@ import React, { useContext, useLayoutEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../@types/rootStack";
+import {
+	RootStackParamList,
+	RootStackScreenProps,
+} from "../../@types/rootStack";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as ImagePicker from "expo-image-picker";
 import RadioButtonRN from "radio-buttons-react-native-expo";
@@ -33,10 +36,9 @@ interface IFormInput {
 	isRecurring: boolean;
 }
 
-type CreateTodoScreenProps = NativeStackScreenProps<RootStackParamList>;
+type EditTodoScreenParams = RootStackScreenProps<"EditTodo">;
 
 // priority types data
-
 const data = [
 	{
 		label: "low",
@@ -52,8 +54,9 @@ const data = [
 	},
 ];
 
-const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
+const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	console.log(route.params.todoItem);
 
 	const createTodo = useContext(AuthContext)!.createTodo;
 	const user = useContext(AuthContext)!.user;
@@ -309,4 +312,4 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 	);
 };
 
-export default CreateTodoScreen;
+export default EditTodoScreen;

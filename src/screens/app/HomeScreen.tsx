@@ -23,16 +23,16 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 		const todosId = user.todos;
 
 		if (todosId) {
-			const notesData = await Promise.all(
+			const todosData = await Promise.all(
 				user.todos.map(async (each: string) => {
-					const note_details: Itodo = await getTodoItem(each);
+					const todo_details: Itodo = await getTodoItem(each);
 					const details = {
 						id: each,
-						...note_details,
+						...todo_details,
 						priorityLevel:
-							note_details.priority === "high"
+							todo_details.priority === "high"
 								? 1
-								: note_details.priority === "medium"
+								: todo_details.priority === "medium"
 								? 2
 								: 3,
 					};
@@ -40,19 +40,21 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 				})
 			);
 
-			const orderedByTime = notesData.sort(
+			const orderedByTime = todosData.sort(
 				(a: Itodo, b: Itodo) => b.createdAt - a.createdAt
 			);
 
-			const orderedByPriority = orderedByTime.sort(
-				(a: Itodo, b: Itodo) => a.priorityLevel - b.priorityLevel
-			);
+			// const orderedByPriority = orderedByTime.sort(
+			// 	(a: Itodo, b: Itodo) => a.priorityLevel - b.priorityLevel
+			// );
 
 			setTodos(orderedByTime);
 		} else {
 			setTodos([]);
 		}
 	};
+
+	console.log(todos);
 
 	useEffect(() => {
 		getNotes();
@@ -63,7 +65,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 			{todos.length > 0 ? (
 				<FlatList
 					data={todos}
-					className="w-5/6"
+					className="w-full"
 					renderItem={({ item, index }) => (
 						<Todo
 							key={index}
@@ -83,7 +85,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 			)}
 			{/* <Todo /> */}
 			<Pressable
-				className={`bg-yellow-500 p-2 absolute right-8 bottom-1/4 rounded-full`}
+				className={`bg-yellow-500 p-2 absolute right-4 bottom-[50] rounded-full`}
 				onPress={() => navigation.navigate("CreateTodo")}
 			>
 				<Ionicons name="ios-add-outline" size={36} color="#ffffff" />
