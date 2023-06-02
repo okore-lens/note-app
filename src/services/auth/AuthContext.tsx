@@ -19,7 +19,7 @@ import {
 
 import { db } from "../../firebase";
 import { IAuth, userData } from "../../@types/authentication";
-import { Note } from "../../@types/note";
+import { Note } from "../../@types/todo";
 
 export const AuthContext = createContext<IAuth | null>(null);
 

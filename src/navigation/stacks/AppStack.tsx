@@ -15,8 +15,8 @@ import { AuthContext } from "../../services/auth/AuthContext";
 
 import HomeScreen from "../../screens/app/HomeScreen";
 import ProfileScreen from "../../screens/app/ProfileScreen";
-import PreviewNoteScreen from "../../screens/app/PreviewNoteScreen";
-import CreateNoteScreen from "../../screens/app/CreateNoteScreen";
+import PreviewTodoScreen from "../../screens/app/PreviewTodoScreen";
+import CreateTodoScreen from "../../screens/app/CreateTodoScreen";
 
 const BottomTabStack = createBottomTabNavigator<BottomTabStackParamList>();
 
@@ -100,8 +100,8 @@ const AppStack = () => {
 				component={BottomStack}
 				options={{ headerShown: false }}
 			/>
-			<Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
-			<Stack.Screen name="CreateNote" component={CreateNoteScreen} />
+			<Stack.Screen name="PreviewTodo" component={PreviewTodoScreen} />
+			<Stack.Screen name="CreateTodo" component={CreateTodoScreen} />
 		</Stack.Navigator>
 	);
 };

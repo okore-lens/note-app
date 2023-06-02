@@ -1,4 +1,4 @@
-import { Note } from "./note";
+import { Todo } from "./todo";
 
 export type userData = {
 	id: string;
@@ -13,5 +13,5 @@ export interface IAuth {
 	isAuthenticated: boolean;
 	user: userData;
 	register: (userData: userData) => void;
-	createNote: (note: Note, user: userData) => void;
+	createNote: (note: Todo, user: userData) => void;
 }

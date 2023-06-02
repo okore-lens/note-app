@@ -4,18 +4,18 @@ import React from "react";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const Note = () => {
+const Todo = () => {
 	const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
 	return (
 		<Pressable
 			android_ripple={{ color: "#eee" }}
 			className="w-full bg-purple-600 p-4 rounded-lg"
-			onPress={() => navigation.navigate("PreviewNote")}
+			onPress={() => navigation.navigate("PreviewTodo")}
 		>
-			<Text className="text-xl text-white">Note</Text>
+			<Text className="text-xl text-white">Todo</Text>
 		</Pressable>
 	);
 };
 
-export default Note;
+export default Todo;

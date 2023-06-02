@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const PreviewNoteScreen = () => {
+const PreviewTodoScreen = () => {
 	return (
 		<View>
-			<Text>PreviewNoteScreen</Text>
+			<Text>PreviewTodoScreen</Text>
 		</View>
 	);
 };
 
-export default PreviewNoteScreen;
+export default PreviewTodoScreen;

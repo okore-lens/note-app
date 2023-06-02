@@ -5,6 +5,6 @@ export type BottomTabStackParamList = {
 
 export type RootStackParamList = {
 	BottomTabs: undefined;
-	PreviewNote: undefined;
-	CreateNote: undefined;
+	PreviewTodo: undefined;
+	CreateTodo: undefined;
 };

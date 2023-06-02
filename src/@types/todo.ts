@@ -1,9 +1,8 @@
 export type PriorityType = "low" | "medium" | "high";
 export type StatusType = "active" | "completed" | "overdue";
 
-export interface Note {
-	titles: string;
-	body: string;
+export interface Todo {
+	title: string;
 	imageUrl?: string;
 	priority: PriorityType;
 	status: StatusType;
