@@ -7,7 +7,7 @@ import {
 	Image,
 	Switch,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -19,16 +19,18 @@ import RadioButtonRN from "radio-buttons-react-native-expo";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 
+import { Todo } from "../../@types/todo";
+
 import uploadProfilePicture from "../../utils/UploadImage";
 import ModalWrapper from "../../components/ModalWrapper";
 import Button from "../../components/Button";
+import { AuthContext } from "../../services/auth/AuthContext";
 
 interface IFormInput {
 	title: string;
 	image: string;
-	priority: { label: string };
+	priority: string;
 	isRecurring: boolean;
-	dueDate: string;
 }
 
 type CreateTodoScreenProps = NativeStackScreenProps<RootStackParamList>;
@@ -53,6 +55,9 @@ const data = [
 const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 
+	const createTodo = useContext(AuthContext)!.createTodo;
+	const user = useContext(AuthContext)!.user;
+
 	// useForm hook
 	const {
 		register,
@@ -69,26 +74,24 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 	const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
 	const [date, setDate] = useState(new Date());
 	const [day, setDay] = useState("Due Date");
+	const [dueDate, setDueDate] = useState<number>(new Date().getTime());
 
 	interface dateChangeParams {
 		selectedDate: string | number | Date;
 	}
 
-	const onDateChange = (
-		onChange: () => void,
-		selectedDate: dateChangeParams
-	) => {
-		onChange(selectedDate);
+	const onDateChange = (selectedDate: dateChangeParams) => {
 		setOpenDatePicker(false);
-		console.log(selectedDate);
-		// console.log("Okore");
-		// setDate(selectedDate);
-		// const tempDate = new Date(selectedDate).toLocaleDateString("en", {
-		// 	day: "2-digit",
-		// 	month: "2-digit",
-		// 	year: "2-digit",
-		// });
-		// setDay(tempDate);
+		setDate(selectedDate);
+		setDueDate(new Date(selectedDate).getTime());
+		const tempDate = new Date(selectedDate).toLocaleDateString("en", {
+			day: "2-digit",
+			month: "2-digit",
+			year: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+		setDay(tempDate);
 	};
 
 	// image Picker
@@ -118,19 +121,29 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 	// note submit handler
 
 	const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-		const form = {
+		const createdAt = Date.now();
+		let form: Todo = {
 			...data,
-			priority: data.priority.label,
+			dueDate,
+			createdAt,
+			status: "active",
+			completedAt: null,
 		};
-		console.log(form);
-		// if (image.name) {
-		// 	const imageUrl = await uploadProfilePicture(
-		// 		image.uri,
-		// 		image.name,
-		// 		"todos"
-		// 	);
-		// }
-		// console.log(imageUrl);
+		if (image.name) {
+			const imageUrl = await uploadProfilePicture(
+				image.uri,
+				image.name,
+				"todos"
+			);
+			form = {
+				...form,
+				imageUrl,
+			};
+		}
+
+		await createTodo(form, user);
+		setModalVisible(false);
+		navigation.goBack();
 	};
 
 	useLayoutEffect(() => {
@@ -147,13 +160,15 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 		});
 	}, []);
 
+	const formValid = isValid && dueDate;
+
 	return (
 		<ScrollView className="flex-1 bg-[#3B3B3B] p-5">
 			{modalVisible && (
 				<ModalWrapper modalVisible additionalStyles="bg-[#00000030]">
 					<View className="bg-[#252525] p-5 rounded-md min-h-[150] w-3/4 items-center">
 						<Ionicons name="alert-circle" size={32} color="#ff10e0" />
-						{isValid ? (
+						{formValid ? (
 							<>
 								<Text className="text-white text-xl">Save Note ?</Text>
 								<View className="w-full flex-row justify-between my-4">
@@ -175,7 +190,8 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 						) : (
 							<>
 								<Text className="text-white text-md text-center my-5">
-									A note must have a title and a body!
+									A todo item must have a title,priority level,recurring state
+									and a due date!
 								</Text>
 								<Button
 									title="Close"
@@ -212,7 +228,7 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 				render={({ field: { onChange, value } }) => (
 					<RadioButtonRN
 						data={data}
-						selectedBtn={(e: any) => onChange(e)}
+						selectedBtn={(e: any) => onChange(e.label)}
 						boxStyle={{
 							flexDirection: "row",
 							width: "30%",
@@ -261,17 +277,11 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 			</View>
 
 			{openDatePicker && (
-				<Controller
-					name="dueDate"
-					control={control}
-					render={({ field: { onChange, value } }) => (
-						<DateTimePicker
-							value={date}
-							onChange={(_, date) => onDateChange(onChange, value)}
-							minimumDate={moment().subtract(0, "years").toDate()}
-							testID="dateTimePicker"
-						/>
-					)}
+				<DateTimePicker
+					value={date}
+					onChange={(_, date) => onDateChange(date)}
+					minimumDate={moment().subtract(0, "years").toDate()}
+					testID="dateTimePicker"
 				/>
 			)}
 

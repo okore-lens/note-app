@@ -19,7 +19,7 @@ import {
 
 import { db } from "../../firebase";
 import { IAuth, userData } from "../../@types/authentication";
-import { Note } from "../../@types/todo";
+import { Todo } from "../../@types/todo";
 
 export const AuthContext = createContext<IAuth | null>(null);
 
@@ -31,7 +31,7 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 	const [user, setUser] = useState<userData | any>({
 		email: "",
 		id: "",
-		notes: [],
+		todos: [],
 		names: "",
 		photoUrl: "",
 		createdAt: Date.now(),
@@ -64,31 +64,40 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 		setUser(userData);
 	}, []);
 
-	const createNote = useCallback(async (note: Note, user: userData) => {
+	const createTodo = useCallback(async (todo: Todo, user: userData) => {
 		// db connection ref
-		const noteRef = await addDoc(collection(db, "notes"), note);
+		const todoRef = await addDoc(collection(db, "todos"), todo);
 
-		// created note Id
-		const noteId = noteRef.id;
+		// created todo Id
+		const todoId = todoRef.id;
 
 		// update Firebase User Doc
 		await updateDoc(doc(db, "users", user.id), {
-			notes: arrayUnion(noteId),
+			todos: arrayUnion(todoId),
 		});
 
 		// update app User
-		const previousNotes = user.notes;
+		const previousTodos = user.todos || [];
 		const updatedProfile = {
 			...user,
-			notes: previousNotes,
+			todos: [...previousTodos, todoId],
 		};
 
 		updateUser(updatedProfile);
 	}, []);
 
+	const getTodoItem = async (todo: string) => {
+		const todosRef = doc(db, "todos", todo);
+		const todosDocSnapshot = await getDoc(todosRef);
+		if (todosDocSnapshot.exists()) {
+			console.log(todosDocSnapshot.data());
+			return todosDocSnapshot.data() as Promise<Todo>;
+		}
+	};
+
 	const value = useMemo(
-		() => ({ user, isAuthenticated, register, createNote }),
-		[user, isAuthenticated, register, createNote]
+		() => ({ user, isAuthenticated, register, createTodo, getTodoItem }),
+		[user, isAuthenticated, register, createTodo, getTodoItem]
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

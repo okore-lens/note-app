@@ -5,7 +5,7 @@ export type userData = {
 	names: string | null;
 	photoUrl: string;
 	email: string | null;
-	notes: string[];
+	todos: string[];
 	createdAt: number;
 };
 
@@ -13,5 +13,6 @@ export interface IAuth {
 	isAuthenticated: boolean;
 	user: userData;
 	register: (userData: userData) => void;
-	createNote: (note: Todo, user: userData) => void;
+	createTodo: (note: Todo, user: userData) => void;
+	getTodoItem: (note: string) => Todo;
 }

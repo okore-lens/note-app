@@ -51,7 +51,7 @@ const LoginScreen = () => {
 					email: data.user.email,
 					id: data.user.uid,
 					names: data.user.displayName,
-					notes: [],
+					todos: [],
 					photoUrl: data.user.photoURL || "",
 					createdAt,
 				});
