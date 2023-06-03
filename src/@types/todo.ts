@@ -11,4 +11,5 @@ export interface Todo {
 	dueDate: number;
 	priorityLevel?: number;
 	id?: string;
+	isRecurring?: boolean;
 }

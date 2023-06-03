@@ -26,9 +26,13 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 			const todosData = await Promise.all(
 				user.todos.map(async (each: string) => {
 					const todo_details: Itodo = await getTodoItem(each);
+
+					const statusOverDue = todo_details.dueDate < new Date().getTime();
+
 					const details = {
 						id: each,
 						...todo_details,
+						status: statusOverDue ? "overdue" : todo_details.status,
 						priorityLevel:
 							todo_details.priority === "high"
 								? 1
@@ -54,8 +58,6 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 		}
 	};
 
-	console.log(todos);
-
 	useEffect(() => {
 		getNotes();
 	}, [user.todos]);
@@ -77,6 +79,8 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 							priorityLevel={item.priorityLevel}
 							status={item.status}
 							imageUrl={item?.imageUrl}
+							isRecurring={item.isRecurring}
+							id={item.id}
 						/>
 					)}
 				/>

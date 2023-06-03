@@ -1,6 +1,8 @@
 import { Pressable, Text, View } from "react-native";
 import React from "react";
 
+import { EvilIcons } from "@expo/vector-icons";
+
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -16,8 +18,11 @@ const Todo = (todoItem: ITodo) => {
 			className="w-full border-b border-[#868686] p-4 flex-row justify-between"
 			onPress={() => navigation.navigate("PreviewTodo", { todoItem: todoItem })}
 		>
-			<View className="">
-				<Text className="text-base text-white">
+			<View>
+				<Text className="text-base text-white items-center">
+					{todoItem.isRecurring && (
+						<EvilIcons name="refresh" size={16} color="green" />
+					)}{" "}
 					{truncate(todoItem.title, 30)}
 				</Text>
 				<View
@@ -42,7 +47,7 @@ const Todo = (todoItem: ITodo) => {
 					{todoItem.status}
 				</Text>
 				<Text className="text-red-600">
-					{new Date(todoItem.createdAt).toLocaleDateString("en-GB", {
+					{new Date(todoItem.dueDate).toLocaleDateString("en-GB", {
 						month: "2-digit",
 						day: "2-digit",
 						year: "2-digit",

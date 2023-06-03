@@ -164,46 +164,47 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 
 	return (
 		<ScrollView className="flex-1 bg-[#3B3B3B] p-5">
-			{modalVisible && (
-				<ModalWrapper modalVisible additionalStyles="bg-[#00000030]">
-					<View className="bg-[#252525] p-5 rounded-md min-h-[150] w-3/4 items-center">
-						<Ionicons name="alert-circle" size={32} color="#ff10e0" />
-						{formValid ? (
-							<>
-								<Text className="text-white text-xl">Save Note ?</Text>
-								<View className="w-full flex-row justify-between my-4">
-									<Button
-										title="Cancel"
-										additionalStyles="w-[47%] bg-red-800"
-										color="text-white"
-										onPress={() => setModalVisible(false)}
-									/>
-									<Button
-										title="Save"
-										additionalStyles="w-[47%] bg-green-800 "
-										color="text-white"
-										onPress={handleSubmit(onSubmit)}
-										disabled={!isValid}
-									/>
-								</View>
-							</>
-						) : (
-							<>
-								<Text className="text-white text-md text-center my-5">
-									A todo item must have a title,priority level,recurring state
-									and a due date!
-								</Text>
+			<ModalWrapper
+				modalVisible={modalVisible}
+				additionalStyles="bg-[#00000030]"
+			>
+				<View className="bg-[#252525] p-5 rounded-md min-h-[150] w-3/4 items-center">
+					<Ionicons name="alert-circle" size={32} color="#ff10e0" />
+					{formValid ? (
+						<>
+							<Text className="text-white text-xl">Save Note ?</Text>
+							<View className="w-full flex-row justify-between my-4">
 								<Button
-									title="Close"
-									additionalStyles="w-[70%] bg-red-800"
+									title="Cancel"
+									additionalStyles="w-[47%] bg-red-800"
 									color="text-white"
 									onPress={() => setModalVisible(false)}
 								/>
-							</>
-						)}
-					</View>
-				</ModalWrapper>
-			)}
+								<Button
+									title="Save"
+									additionalStyles="w-[47%] bg-green-800 "
+									color="text-white"
+									onPress={handleSubmit(onSubmit)}
+									disabled={!isValid}
+								/>
+							</View>
+						</>
+					) : (
+						<>
+							<Text className="text-white text-md text-center my-5">
+								A todo item must have a title,priority level,recurring state and
+								a due date!
+							</Text>
+							<Button
+								title="Close"
+								additionalStyles="w-[70%] bg-red-800"
+								color="text-white"
+								onPress={() => setModalVisible(false)}
+							/>
+						</>
+					)}
+				</View>
+			</ModalWrapper>
 
 			<Controller
 				name="title"

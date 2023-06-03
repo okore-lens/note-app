@@ -11,11 +11,6 @@ import React, { useContext, useLayoutEffect, useState } from "react";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-	RootStackParamList,
-	RootStackScreenProps,
-} from "../../@types/rootStack";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as ImagePicker from "expo-image-picker";
 import RadioButtonRN from "radio-buttons-react-native-expo";
@@ -23,6 +18,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 
 import { Todo } from "../../@types/todo";
+import { RootStackScreenProps } from "../../@types/rootStack";
 
 import uploadProfilePicture from "../../utils/UploadImage";
 import ModalWrapper from "../../components/ModalWrapper";
@@ -31,7 +27,6 @@ import { AuthContext } from "../../services/auth/AuthContext";
 
 interface IFormInput {
 	title: string;
-	image: string;
 	priority: string;
 	isRecurring: boolean;
 }
@@ -56,9 +51,9 @@ const data = [
 
 const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
-	console.log(route.params.todoItem);
+	const todoItem = route.params.todoItem;
 
-	const createTodo = useContext(AuthContext)!.createTodo;
+	const updateTodo = useContext(AuthContext)!.updateTodo;
 	const user = useContext(AuthContext)!.user;
 
 	// useForm hook
@@ -69,7 +64,9 @@ const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 		formState: { isValid },
 	} = useForm<IFormInput>({
 		defaultValues: {
-			title: "",
+			title: todoItem.title,
+			isRecurring: todoItem.isRecurring,
+			priority: todoItem.priority,
 		},
 	});
 
@@ -124,14 +121,17 @@ const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 	// todo submit handler
 
 	const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-		const createdAt = Date.now();
 		let form: Todo = {
-			...data,
+			...todoItem,
+			priority: data.priority,
+			isRecurring: data.isRecurring,
+			title: data.title,
 			dueDate,
-			createdAt,
-			status: "active",
-			completedAt: null,
 		};
+		delete form.priorityLevel;
+		if (form.imageUrl === undefined) {
+			delete form.imageUrl;
+		}
 		if (image.name) {
 			const imageUrl = await uploadProfilePicture(
 				image.uri,
@@ -143,10 +143,10 @@ const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 				imageUrl,
 			};
 		}
-
-		await createTodo(form, user);
+		// console.log(form);
+		await updateTodo(form);
 		setModalVisible(false);
-		navigation.goBack();
+		navigation.navigate("BottomTabs");
 	};
 
 	useLayoutEffect(() => {
@@ -161,6 +161,17 @@ const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 				</Pressable>
 			),
 		});
+		todoItem.imageUrl &&
+			setImage((prev) => ({ ...prev, uri: todoItem.imageUrl! }));
+		setDay(
+			new Date(todoItem.dueDate).toLocaleDateString("en", {
+				day: "2-digit",
+				month: "2-digit",
+				year: "2-digit",
+				hour: "2-digit",
+				minute: "2-digit",
+			})
+		);
 	}, []);
 
 	const formValid = isValid && dueDate;
@@ -235,6 +246,7 @@ const EditTodoScreen = ({ navigation, route }: EditTodoScreenParams) => {
 					<RadioButtonRN
 						data={data}
 						selectedBtn={(e: any) => onChange(e.label)}
+						initial={todoItem.priorityLevel}
 						boxStyle={{
 							flexDirection: "row",
 							width: "30%",

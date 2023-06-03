@@ -86,18 +86,29 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 		updateUser(updatedProfile);
 	}, []);
 
-	const getTodoItem = async (todo: string) => {
+	const getTodoItem = useCallback(async (todo: string) => {
 		const todosRef = doc(db, "todos", todo);
 		const todosDocSnapshot = await getDoc(todosRef);
 		if (todosDocSnapshot.exists()) {
 			console.log(todosDocSnapshot.data());
 			return todosDocSnapshot.data() as Promise<Todo>;
 		}
-	};
+	}, []);
+
+	const updateTodo = useCallback(async (todo: Todo) => {
+		await updateDoc(doc(db, "todos", todo.id!), { ...todo });
+	}, []);
 
 	const value = useMemo(
-		() => ({ user, isAuthenticated, register, createTodo, getTodoItem }),
-		[user, isAuthenticated, register, createTodo, getTodoItem]
+		() => ({
+			user,
+			isAuthenticated,
+			register,
+			createTodo,
+			getTodoItem,
+			updateTodo,
+		}),
+		[user, isAuthenticated, register, createTodo, getTodoItem, updateTodo]
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
