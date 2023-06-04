@@ -10,6 +10,7 @@ import auth from "@react-native-firebase/auth";
 
 import { GOOGLE_WEB_CLIENT_ID } from "@env";
 import { AuthContext } from "../../services/auth/AuthContext";
+import LoadingModal from "../../components/LoadingModal";
 const LoginScreen = () => {
 	// hooks
 	const [initializing, setInitializing] = useState<boolean>(true);
@@ -28,6 +29,7 @@ const LoginScreen = () => {
 	};
 
 	const onGoogleButtonPress = async () => {
+		setIsLoading(true);
 		const isSignedIn = await GoogleSignin.isSignedIn();
 		if (isSignedIn) {
 			await GoogleSignin.revokeAccess();
@@ -45,18 +47,34 @@ const LoginScreen = () => {
 		const user_sign_in = auth().signInWithCredential(googleCredential);
 		const createdAt = Date.now();
 
-		user_sign_in
-			.then((data) => {
-				authenticateUser({
-					email: data.user.email,
-					id: data.user.uid,
-					names: data.user.displayName,
-					todos: [],
-					photoUrl: data.user.photoURL || "",
-					createdAt,
-				});
-			})
-			.catch((err) => console.log(err));
+		try {
+			const data = await user_sign_in;
+			await authenticateUser({
+				email: data.user.email,
+				id: data.user.uid,
+				names: data.user.displayName,
+				todos: [],
+				photoUrl: data.user.photoURL || "",
+				createdAt,
+			});
+		} catch (err) {
+			console.log(err);
+		} finally {
+			setIsLoading(false);
+		}
+
+		// user_sign_in
+		// 	.then((data) => {
+		// 		authenticateUser({
+		// 			email: data.user.email,
+		// 			id: data.user.uid,
+		// 			names: data.user.displayName,
+		// 			todos: [],
+		// 			photoUrl: data.user.photoURL || "",
+		// 			createdAt,
+		// 		});
+		// 	})
+		// 	.catch((err) => console.log(err))}
 	};
 
 	useEffect(() => {
@@ -68,6 +86,7 @@ const LoginScreen = () => {
 
 	return (
 		<View className="flex-1 items-center justify-center bg-yellow-700">
+			<LoadingModal modalVisible={isLoading} />
 			<Text className="text-lg font-extrabold">Inotes </Text>
 			<GoogleSigninButton onPress={onGoogleButtonPress} />
 		</View>

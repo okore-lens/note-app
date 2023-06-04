@@ -17,6 +17,7 @@ import { AuthContext } from "../../services/auth/AuthContext";
 import { Todo } from "../../@types/todo";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import LoadingModal from "../../components/LoadingModal";
 
 type PreviewTodoScreenProps = RootStackScreenProps<"PreviewTodo">;
 
@@ -32,9 +33,11 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 	);
 	// console.log(todoItem);
 
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 
 	const completeTodo = async () => {
+		setIsLoading(true);
 		try {
 			if (todoItem.imageUrl === undefined) {
 				delete todoItem.imageUrl;
@@ -47,6 +50,8 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 			navigation.goBack();
 		} catch (e) {
 			console.log(e);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -74,6 +79,7 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 	};
 
 	const deleteTodo = async () => {
+		setIsLoading(true);
 		const todosRef = doc(db, `todos`, todoItem.id!);
 		await deleteDoc(todosRef);
 
@@ -91,7 +97,7 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 		};
 
 		updateUser(updatedProfile);
-
+		setIsLoading(false);
 		navigation.goBack();
 	};
 
@@ -107,7 +113,7 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 						onPress={() => setModalVisible(false)}
 					/>
 					<Button
-						title="Save"
+						title="Delete"
 						additionalStyles="w-[47%] bg-green-800 "
 						color="text-white"
 						onPress={deleteTodo}
@@ -120,6 +126,7 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 
 	return (
 		<ScrollView className="flex-1 bg-[#3B3B3B] p-5">
+			<LoadingModal modalVisible={isLoading} />
 			<ModalWrapper
 				modalVisible={modalVisible}
 				additionalStyles="bg-[#00000030]"
@@ -208,7 +215,7 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 					size={24}
 					color="red"
 				/>
-				{todoItem.status === "completed" && (
+				{todoItem.status !== "completed" && (
 					<>
 						<Feather
 							name="edit"

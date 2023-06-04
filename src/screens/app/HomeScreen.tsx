@@ -14,32 +14,33 @@ import { Todo as Itodo } from "../../@types/todo";
 import ModalWrapper from "../../components/ModalWrapper";
 import Button from "../../components/Button";
 import { doInFuture, doToday } from "../../utils/dateFinder";
+import LoadingModal from "../../components/LoadingModal";
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 const data = [
 	{
-		label: "refresh",
-		accessibilityLabel: "refresh",
+		label: "All",
+		accessibilityLabel: "all",
 	},
 	{
-		label: "completed",
+		label: "Completed",
 		accessibilityLabel: "completed",
 	},
 	{
-		label: "active",
+		label: "Active",
 		accessibilityLabel: "active",
 	},
 	{
-		label: "today's",
+		label: "Today's",
 		accessibilityLabel: "today's",
 	},
 	{
-		label: "future",
+		label: "Future",
 		accessibilityLabel: "future",
 	},
 	{
-		label: "overdue",
+		label: "Overdue",
 		accessibilityLabel: "overdue",
 	},
 ];
@@ -49,6 +50,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 	const getTodoItem = useContext(AuthContext)!.getTodoItem;
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const [todos, setTodos] = useState<Itodo[]>([]);
 	const [activeTodos, setActiveTodos] = useState<Itodo[]>([]);
@@ -56,11 +58,14 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 	const [futureTodos, setFutureTodos] = useState<Itodo[]>([]);
 	const [todaysTodos, setTodoysTodos] = useState<Itodo[]>([]);
 	const [overdueTodos, setOverdueTodos] = useState<Itodo[]>([]);
+
 	const [filteredTodos, setFilteredTodos] = useState<Itodo[]>([]);
+	const [sortedTodos, setSortedTodos] = useState<Itodo[]>([]);
 
 	const [searchTitle, setSearchTitle] = useState<string>("");
 
 	const getNotes = async () => {
+		setIsLoading(true);
 		const todosId = user.todos;
 
 		if (todosId) {
@@ -98,7 +103,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 			const overdueTodosList: Itodo[] = [];
 
 			orderedByTime.forEach((item) => {
-				console.log(item);
+				// console.log(item);
 				item.status === "active" && activeTodosList.push(item);
 				item.status === "completed" && completedTodosList.push(item);
 				item.status === "overdue" && overdueTodosList.push(item);
@@ -109,12 +114,18 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 					item.status !== "completed" &&
 					todayTodosList.push(item);
 			});
+			futureTodosList.forEach((item) =>
+				console.log(
+					new Date(item.dueDate).toLocaleDateString("en-GB", { day: "2-digit" })
+				)
+			);
 
 			const sortCompletedTodos = completedTodosList.sort(
 				(a: Itodo, b: Itodo) => b.completedAt! - a.completedAt!
 			);
 			setActiveTodos(activeTodosList);
 			setTodos(orderedByTime);
+			setSortedTodos(orderedByTime);
 			setFutureTodos(futureTodosList);
 			setTodoysTodos(todayTodosList);
 			setCompletedTodos(sortCompletedTodos);
@@ -122,16 +133,17 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 		} else {
 			setTodos([]);
 		}
+		setIsLoading(false);
 	};
 
 	const refreshHandler = async () => {
 		try {
-			setIsRefreshing(true);
+			setIsLoading(true);
 			await getNotes();
 		} catch (err) {
 			console.log(err);
 		} finally {
-			setIsRefreshing(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -170,26 +182,26 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 		});
 	}, [navigation, activeTodos]);
 
-	const sortHandler = (e: { label: string }) => {
+	const sortHandler = (e: { accessibilityLabel: string }) => {
 		// console.log(e);
-		if (e.label === "active") {
-			setFilteredTodos(activeTodos);
+		if (e.accessibilityLabel === "active") {
+			setSortedTodos(activeTodos);
 		}
-		if (e.label === "overdue") {
+		if (e.accessibilityLabel === "overdue") {
 			console.log(overdueTodos);
-			setFilteredTodos(overdueTodos);
+			setSortedTodos(overdueTodos);
 		}
-		if (e.label === "today's") {
-			setFilteredTodos(todaysTodos);
+		if (e.accessibilityLabel === "today's") {
+			setSortedTodos(todaysTodos);
 		}
-		if (e.label === "refresh") {
-			setFilteredTodos([]);
+		if (e.accessibilityLabel === "all") {
+			setSortedTodos(todos);
 		}
-		if (e.label === "completed") {
-			setFilteredTodos(completedTodos);
+		if (e.accessibilityLabel === "completed") {
+			setSortedTodos(completedTodos);
 		}
-		if (e.label === "overdue") {
-			setFilteredTodos(futureTodos);
+		if (e.accessibilityLabel === "future") {
+			setSortedTodos(futureTodos);
 		}
 
 		// setModalVisible(false);
@@ -201,6 +213,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
 	return (
 		<View className="flex-1 bg-[#252525]  items-center pb-5 px-2">
+			<LoadingModal modalVisible={isLoading} />
 			<ModalWrapper modalVisible={modalVisible}>
 				<View className="bg-[#252525] p-5 rounded-md min-h-[150] w-3/4 items-center">
 					<Ionicons name="alert-circle" size={32} color="#ff10e0" />
@@ -255,7 +268,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 					data={filteredTodos}
 					className="w-full"
 					onRefresh={refreshHandler}
-					refreshing={isRefreshing}
+					refreshing={isLoading}
 					renderItem={({ item, index }) => (
 						<Todo
 							key={index}
@@ -272,12 +285,12 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 						/>
 					)}
 				/>
-			) : todos.length > 0 ? (
+			) : sortedTodos.length > 0 ? (
 				<FlatList
-					data={todos}
+					data={sortedTodos}
 					className="w-full"
 					onRefresh={refreshHandler}
-					refreshing={isRefreshing}
+					refreshing={isLoading}
 					renderItem={({ item, index }) => (
 						<Todo
 							key={index}

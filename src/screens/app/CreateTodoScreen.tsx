@@ -25,6 +25,7 @@ import uploadProfilePicture from "../../utils/UploadImage";
 import ModalWrapper from "../../components/ModalWrapper";
 import Button from "../../components/Button";
 import { AuthContext } from "../../services/auth/AuthContext";
+import LoadingModal from "../../components/LoadingModal";
 
 interface IFormInput {
 	title: string;
@@ -53,6 +54,7 @@ const data = [
 ];
 
 const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 
 	const createTodo = useContext(AuthContext)!.createTodo;
@@ -121,6 +123,7 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 	// todo submit handler
 
 	const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+		setIsLoading(true);
 		const createdAt = Date.now();
 		let form: Todo = {
 			...data,
@@ -143,6 +146,7 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 
 		await createTodo(form, user);
 		setModalVisible(false);
+		setIsLoading(false);
 		navigation.goBack();
 	};
 
@@ -164,6 +168,7 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 
 	return (
 		<ScrollView className="flex-1 bg-[#3B3B3B] p-5">
+			<LoadingModal modalVisible={isLoading} />
 			<ModalWrapper
 				modalVisible={modalVisible}
 				additionalStyles="bg-[#00000030]"
