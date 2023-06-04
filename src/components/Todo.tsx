@@ -38,13 +38,19 @@ const Todo = (todoItem: ITodo) => {
 
 			<View className="justify-between">
 				<Text
-					className={` h-5 max-w-[100] ${
+					className={` min-h-5 max-w-[100] ${
 						todoItem.status === "active" && "bg-yellow-700"
 					} ${todoItem.status === "overdue" && "bg-slate-700"} ${
 						todoItem.status === "completed" && "bg-green-700"
 					} px-3  rounded-full text-white text-xs self-end `}
 				>
 					{todoItem.status}
+					{todoItem.status === "completed" &&
+						` ${new Date(todoItem.completedAt!).toLocaleDateString("en-GB", {
+							day: "2-digit",
+							month: "2-digit",
+							year: "2-digit",
+						})}`}
 				</Text>
 				<Text className="text-red-600">
 					{new Date(todoItem.dueDate).toLocaleDateString("en-GB", {

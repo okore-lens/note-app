@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from "react";
 import {
 	GoogleSignin,
 	GoogleSigninButton,
-	statusCodes,
 } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 
@@ -62,19 +61,6 @@ const LoginScreen = () => {
 		} finally {
 			setIsLoading(false);
 		}
-
-		// user_sign_in
-		// 	.then((data) => {
-		// 		authenticateUser({
-		// 			email: data.user.email,
-		// 			id: data.user.uid,
-		// 			names: data.user.displayName,
-		// 			todos: [],
-		// 			photoUrl: data.user.photoURL || "",
-		// 			createdAt,
-		// 		});
-		// 	})
-		// 	.catch((err) => console.log(err))}
 	};
 
 	useEffect(() => {
@@ -85,9 +71,14 @@ const LoginScreen = () => {
 	if (initializing) return null;
 
 	return (
-		<View className="flex-1 items-center justify-center bg-yellow-700">
+		<View className="flex-1 items-center p-10 pt-[15%]  bg-yellow-700">
 			<LoadingModal modalVisible={isLoading} />
-			<Text className="text-lg font-extrabold">Inotes </Text>
+			<Text className="text-3xl font-extrabold text-center pb-5 text-white">
+				E-Todos{" "}
+			</Text>
+			<Text className="text-sm text-slate-800 pb-10 font-extrabold text-center">
+				Create Your own personalized ToDo Items 🚀{" "}
+			</Text>
 			<GoogleSigninButton onPress={onGoogleButtonPress} />
 		</View>
 	);

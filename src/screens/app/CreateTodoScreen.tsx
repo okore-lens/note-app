@@ -143,7 +143,10 @@ const CreateTodoScreen = ({ navigation }: CreateTodoScreenProps) => {
 				imageUrl,
 			};
 		}
-
+		if (data.isRecurring === undefined) {
+			data.isRecurring = false;
+		}
+		// console.log(form);
 		await createTodo(form, user);
 		setModalVisible(false);
 		setIsLoading(false);

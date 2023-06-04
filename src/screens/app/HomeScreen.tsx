@@ -20,11 +20,11 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 const data = [
 	{
-		label: "All",
+		label: "All (Date Created)",
 		accessibilityLabel: "all",
 	},
 	{
-		label: "Completed",
+		label: "Completed (Date Completed)",
 		accessibilityLabel: "completed",
 	},
 	{
@@ -114,15 +114,11 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 					item.status !== "completed" &&
 					todayTodosList.push(item);
 			});
-			futureTodosList.forEach((item) =>
-				console.log(
-					new Date(item.dueDate).toLocaleDateString("en-GB", { day: "2-digit" })
-				)
-			);
 
 			const sortCompletedTodos = completedTodosList.sort(
 				(a: Itodo, b: Itodo) => b.completedAt! - a.completedAt!
 			);
+
 			setActiveTodos(activeTodosList);
 			setTodos(orderedByTime);
 			setSortedTodos(orderedByTime);
@@ -138,12 +134,12 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
 	const refreshHandler = async () => {
 		try {
-			setIsLoading(true);
+			setIsRefreshing(true);
 			await getNotes();
 		} catch (err) {
 			console.log(err);
 		} finally {
-			setIsLoading(false);
+			setIsRefreshing(false);
 		}
 	};
 
@@ -183,12 +179,10 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 	}, [navigation, activeTodos]);
 
 	const sortHandler = (e: { accessibilityLabel: string }) => {
-		// console.log(e);
 		if (e.accessibilityLabel === "active") {
 			setSortedTodos(activeTodos);
 		}
 		if (e.accessibilityLabel === "overdue") {
-			console.log(overdueTodos);
 			setSortedTodos(overdueTodos);
 		}
 		if (e.accessibilityLabel === "today's") {
@@ -204,7 +198,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 			setSortedTodos(futureTodos);
 		}
 
-		// setModalVisible(false);
+		setModalVisible(false);
 	};
 
 	useEffect(() => {
@@ -268,7 +262,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 					data={filteredTodos}
 					className="w-full"
 					onRefresh={refreshHandler}
-					refreshing={isLoading}
+					refreshing={isRefreshing}
 					renderItem={({ item, index }) => (
 						<Todo
 							key={index}
@@ -290,7 +284,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 					data={sortedTodos}
 					className="w-full"
 					onRefresh={refreshHandler}
-					refreshing={isLoading}
+					refreshing={isRefreshing}
 					renderItem={({ item, index }) => (
 						<Todo
 							key={index}
