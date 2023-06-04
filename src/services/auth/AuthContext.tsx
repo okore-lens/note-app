@@ -90,12 +90,12 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 		const todosRef = doc(db, "todos", todo);
 		const todosDocSnapshot = await getDoc(todosRef);
 		if (todosDocSnapshot.exists()) {
-			console.log(todosDocSnapshot.data());
 			return todosDocSnapshot.data() as Promise<Todo>;
 		}
 	}, []);
 
 	const updateTodo = useCallback(async (todo: Todo) => {
+		console.log(todo);
 		await updateDoc(doc(db, "todos", todo.id!), { ...todo });
 	}, []);
 
@@ -107,8 +107,17 @@ const AuthContextProvider = ({ children }: authContextProvider) => {
 			createTodo,
 			getTodoItem,
 			updateTodo,
+			updateUser,
 		}),
-		[user, isAuthenticated, register, createTodo, getTodoItem, updateTodo]
+		[
+			user,
+			isAuthenticated,
+			register,
+			createTodo,
+			getTodoItem,
+			updateTodo,
+			updateUser,
+		]
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

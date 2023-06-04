@@ -38,7 +38,7 @@ const Todo = (todoItem: ITodo) => {
 
 			<View className="justify-between">
 				<Text
-					className={` h-5 max-w-[70] ${
+					className={` h-5 max-w-[100] ${
 						todoItem.status === "active" && "bg-yellow-700"
 					} ${todoItem.status === "overdue" && "bg-slate-700"} ${
 						todoItem.status === "completed" && "bg-green-700"

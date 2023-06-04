@@ -45,7 +45,7 @@ const BottomStack = () => {
 				name="Home"
 				component={HomeScreen}
 				options={{
-					headerTitle: "E-Notes",
+					headerTitle: "E-Todos",
 					tabBarIcon: ({ focused }) => (
 						<>
 							{focused ? (
@@ -54,14 +54,6 @@ const BottomStack = () => {
 								<Foundation name="clipboard-notes" size={32} color="#ffffff" />
 							)}
 						</>
-					),
-					headerRight: () => (
-						<Pressable
-							android_ripple={{ color: "#eee" }}
-							className="bg-[#3B3B3B]  mr-4 mt-4 p-1 rounded-md items-center justify-center"
-						>
-							<Ionicons name="md-search-sharp" size={24} color="#ffffff" />
-						</Pressable>
 					),
 				}}
 			/>

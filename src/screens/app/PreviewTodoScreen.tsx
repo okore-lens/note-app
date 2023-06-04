@@ -1,20 +1,122 @@
 import { View, Text, Image } from "react-native";
-import React, { useState } from "react";
+import React, { ReactElement, useContext, useState } from "react";
 
-import { EvilIcons, Ionicons } from "@expo/vector-icons";
+import {
+	EvilIcons,
+	Ionicons,
+	Feather,
+	MaterialIcons,
+	MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { RootStackScreenProps } from "../../@types/rootStack";
 import Button from "../../components/Button";
 import ModalWrapper from "../../components/ModalWrapper";
+import { AuthContext } from "../../services/auth/AuthContext";
+import { Todo } from "../../@types/todo";
+import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 type PreviewTodoScreenProps = RootStackScreenProps<"PreviewTodo">;
 
 const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
-	const todoItem = route.params.todoItem;
+	const updateTodo = useContext(AuthContext)!.updateTodo;
+	const user = useContext(AuthContext)!.user;
+	const updateUser = useContext(AuthContext)!.updateUser;
+	const todoItem = route.params.todoItem as Todo;
+	const [modalItem, setModalItem] = useState<ReactElement>(
+		<View>
+			<Text>Modal Item</Text>
+		</View>
+	);
 	// console.log(todoItem);
 
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+	const completeTodo = async () => {
+		try {
+			if (todoItem.imageUrl === undefined) {
+				delete todoItem.imageUrl;
+			}
+			updateTodo({
+				...todoItem,
+				status: "completed",
+				completedAt: new Date().getTime(),
+			});
+			navigation.goBack();
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const completeHandler = () => {
+		setModalItem(
+			<>
+				<Text className="text-white text-xl">Complete Note ?</Text>
+				<View className="w-full flex-row justify-between my-4">
+					<Button
+						title="Cancel"
+						additionalStyles="w-[47%] bg-red-800"
+						color="text-white"
+						onPress={() => setModalVisible(false)}
+					/>
+					<Button
+						title="Save"
+						additionalStyles="w-[47%] bg-green-800 "
+						color="text-white"
+						onPress={completeTodo}
+					/>
+				</View>
+			</>
+		);
+		setModalVisible(true);
+	};
+
+	const deleteTodo = async () => {
+		const todosRef = doc(db, `todos`, todoItem.id!);
+		await deleteDoc(todosRef);
+
+		const filteredTodos = user.todos.filter(
+			(item: string) => item !== todoItem.id
+		);
+
+		await updateDoc(doc(db, "users", user.id), {
+			todos: arrayRemove(todoItem.id),
+		});
+
+		const updatedProfile = {
+			...user,
+			todos: filteredTodos,
+		};
+
+		updateUser(updatedProfile);
+
+		navigation.goBack();
+	};
+
+	const deleteHandler = async () => {
+		setModalItem(
+			<>
+				<Text className="text-white text-xl">Delete Note ?</Text>
+				<View className="w-full flex-row justify-between my-4">
+					<Button
+						title="Cancel"
+						additionalStyles="w-[47%] bg-red-800"
+						color="text-white"
+						onPress={() => setModalVisible(false)}
+					/>
+					<Button
+						title="Save"
+						additionalStyles="w-[47%] bg-green-800 "
+						color="text-white"
+						onPress={deleteTodo}
+					/>
+				</View>
+			</>
+		);
+		setModalVisible(true);
+	};
 
 	return (
 		<ScrollView className="flex-1 bg-[#3B3B3B] p-5">
@@ -24,27 +126,10 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 			>
 				<View className="bg-[#252525] p-5 rounded-md min-h-[150] w-3/4 items-center">
 					<Ionicons name="alert-circle" size={32} color="#ff10e0" />
-					<Text className="text-white text-xl">Update Note ?</Text>
-					<View className="w-full flex-row justify-between my-4">
-						<Button
-							title="Cancel"
-							additionalStyles="w-[47%] bg-red-800"
-							color="text-white"
-							onPress={() => setModalVisible(false)}
-						/>
-						<Button
-							title="Save"
-							additionalStyles="w-[47%] bg-green-800 "
-							color="text-white"
-							onPress={() => console.log("Submited")}
-						/>
-					</View>
+					{modalItem}
 				</View>
 			</ModalWrapper>
-			<View className="flex-row justify-between w-full items-center">
-				{todoItem.isRecurring && (
-					<EvilIcons name="refresh" size={36} color="white" />
-				)}
+			<View className="flex-row  w-full items-center justify-between">
 				<View
 					className={` h-5 ${todoItem.priorityLevel === 1 && "bg-red-700"} ${
 						todoItem.priorityLevel === 2 && "bg-green-700"
@@ -56,19 +141,13 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 						{todoItem.priority.toLocaleUpperCase()}
 					</Text>
 				</View>
+				{todoItem.isRecurring && (
+					<EvilIcons name="refresh" size={36} color="white" />
+				)}
 			</View>
-
-			{todoItem.imageUrl && (
-				<View className="bg-slate-400 h-[200] rounded-xl overflow-hidden">
-					<Image
-						source={{ uri: todoItem.imageUrl }}
-						className="h-full w-full"
-					/>
-				</View>
-			)}
 			<Text className="text-white text-xl my-3">{todoItem.title}</Text>
 
-			<View className="flex-row justify-between">
+			<View className="flex-row justify-between mb-4">
 				<Text className="text-white text-sm border-b border-[#222222] bg-yellow-400 p-5 w-[45%] rounded-lg ">
 					Created On{" "}
 					{new Date(todoItem.createdAt).toLocaleDateString("en-GB", {
@@ -114,21 +193,39 @@ const PreviewTodoScreen = ({ navigation, route }: PreviewTodoScreenProps) => {
 					</Text>
 				)}
 			</View>
+			{todoItem.imageUrl && (
+				<View className="bg-slate-400 h-[200] rounded-xl overflow-hidden">
+					<Image
+						source={{ uri: todoItem.imageUrl }}
+						className="h-full w-full"
+					/>
+				</View>
+			)}
 			<View className="flex-row mt-10 justify-between px-5">
-				<Button
-					title="Edit Todo"
-					onPress={() =>
-						navigation.navigate("EditTodo", { todoItem: todoItem })
-					}
-					additionalStyles="bg-slate-400 w-[47%]"
-					color="text-white"
+				<MaterialCommunityIcons
+					onPress={deleteHandler}
+					name="delete-outline"
+					size={24}
+					color="red"
 				/>
-				<Button
-					title="Completed"
-					onPress={() => setModalVisible(true)}
-					additionalStyles="bg-green-500 w-[47%]"
-					color="text-white"
-				/>
+				{todoItem.status === "completed" && (
+					<>
+						<Feather
+							name="edit"
+							size={24}
+							color="white"
+							onPress={() =>
+								navigation.navigate("EditTodo", { todoItem: todoItem })
+							}
+						/>
+						<MaterialIcons
+							name="done-outline"
+							size={24}
+							color="green"
+							onPress={completeHandler}
+						/>
+					</>
+				)}
 			</View>
 		</ScrollView>
 	);

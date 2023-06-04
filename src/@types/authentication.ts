@@ -16,4 +16,5 @@ export interface IAuth {
 	createTodo: (note: Todo, user: userData) => void;
 	getTodoItem: (note: string) => Todo;
 	updateTodo: (note: Todo) => void;
+	updateUser: (user: userData) => void;
 }
